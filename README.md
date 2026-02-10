@@ -1,4 +1,5 @@
 # 🚀 Microservices Auth & Todo System
+![Auth](docs/swaggerauth.png) ![Todo](docs/swaggertodo.png)
 
 Тестовое задание на позицию Backend Developer. Система состоит из двух независимых микросервисов, контейнеризированных с помощью Docker.
 
@@ -61,9 +62,8 @@ Todo Service: http://localhost:8021/api/docs
 Обеспечивает вход и управление сессиями.
 POST /auth/login — Вход (email/password).
 POST /auth/refresh — Обновление токенов.
-![Auth](docs/swaggerauth.png)
+
 2. Todo Service
 Управление списком дел. Требует Authorization: Bearer <token> в заголовках.
 GET /todos — Получение списка.
 POST /todos — Создание (валидация title).
-![Todo](docs/swaggertodo.png)
