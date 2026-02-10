@@ -1,0 +1,57 @@
+version: '3.8'
+
+services:
+  db-mongo:
+    image: mongo:latest
+    container_name: auth-db-mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  db-postgres:
+    image: postgres:15-alpine
+    container_name: todo-db-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: todo_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  auth-service:
+    build: ./auth-service
+    container_name: auth-service
+    restart: always
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db-mongo
+    environment:
+      - PORT=8000
+      - MONGO_DB_URL=mongodb://db-mongo:27017/auth_service_db
+      - JWT_ACCESS_SECRET=super_access_secret_key_123
+      - JWT_REFRESH_SECRET=super_refresh_secret_key_456
+      - ACCESS_EXPIRES=1h
+      - REFRESH_EXPIRES=7d
+
+  todo-service:
+    build: ./todo-service
+    container_name: todo-service
+    restart: always
+    ports:
+      - "8021:8021"
+    depends_on:
+      - db-postgres
+    environment:
+      - PORT=8021
+      - DATABASE_URL=postgres://user:password@db-postgres:5432/todo_db
+      - JWT_SECRET=super_access_secret_key_123
+
+volumes:
+  mongo_data:
+  postgres_data:
