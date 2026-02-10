@@ -1,72 +1,69 @@
-🚀 Main Features
-🔐 Auth Service
-JWT Authentication: Выдача пары Access Token (1 час) и Refresh Token.
-Token Refresh: Механизм обновления токенов при истечении Access-периода.
-Security: Хеширование паролей и защищенные роуты.
+# 🚀 Microservices Auth & Todo System
 
-✅ Todo Service (CRUD)
-Read: Получение списка задач авторизованного пользователя.
-Create: Создание новых задач с валидацией данных.
-Update: Изменение статуса или текста задачи.
-Delete: Удаление записей.
-Validation: Строгая проверка входящих данных через class-validator.
+Тестовое задание на позицию Backend Developer. Система состоит из двух независимых микросервисов, контейнеризированных с помощью Docker.
 
-🧩 Tech Stack
-Backend
-Framework: NestJS (Node.js)
-Databases: * PostgreSQL (Todo Service) + TypeORM
-MongoDB (Auth Service) + Mongoose
-Documentation: Swagger (OpenAPI 3.0)
-Validation: Class-validator & Class-transformer
-Logging: NestJS Built-in Logger
+---
 
-DevOps
-Docker: Containerization of services
-Docker Compose: Multi-container orchestration
+## 🛠 Tech Stack
 
-🐳 Docker Deployment
-Проект полностью готов к запуску в одну команду.
+| Component | Technology |
+| :--- | :--- |
+| **Frameworks** | NestJS, Express (Node.js) |
+| **Databases** | PostgreSQL (TypeORM), MongoDB (Mongoose) |
+| **Auth** | JWT (Access & Refresh tokens) |
+| **Docs** | Swagger (OpenAPI 3.0) |
+| **DevOps** | Docker, Docker Compose |
 
-Services & Ports
-Auth API: http://localhost:8000
-Todo API: http://localhost:8021
+---
 
-Swagger Auth: http://localhost:8000/api-docs
-Swagger Todo: http://localhost:8021/api/docs
+## 🔐 Main Features
 
-📁 Project Structure
+### Auth Service
+* **JWT Authentication**: Выдача пары Access Token (1 час) и Refresh Token.
+* **Token Refresh**: Механизм автоматического обновления токенов.
+* **Security**: Хеширование паролей и валидация входящих данных.
 
-NEW-POST/
-├── auth-service/          # Микросервис авторизации (Express/Nest)
-│   ├── controllers/       # Обработка запросов
-│   ├── models/            # Схемы MongoDB (Mongoose)
-│   ├── routers/           # Определение путей API
-│   ├── index.ts           # Точка входа в приложение
-│   ├── fixtures.ts        # Seed-скрипт для пользователей
-│   ├── config.ts          # Конфигурация JWT и БД
-│   ├── .env               # (Скрыт) Настройки окружения
-│   └── Dockerfile         # Инструкции для сборки образа
-│
+### Todo Service (CRUD)
+* **Operations**: Полный цикл CRUD для задач.
+* **Access Control**: Доступ только для авторизованных пользователей через проверку JWT.
+* **Validation**: Строгая проверка данных через `class-validator`.
+
+---
+
+## 📁 Project Structure
+
+```text
+microservices/
+├── auth-service/          # Микросервис авторизации
+│   ├── controllers/       # Обработка логики
+│   ├── models/            # Схемы MongoDB
+│   ├── fixtures.ts        # Seed-скрипт (наполнение БД)
+│   └── Dockerfile         
 ├── todo-service/          # Микросервис задач (NestJS)
-│   ├── src/               # Исходный код сервиса
-│   │   ├── app.module.ts  # Главный модуль
-│   │   └── ...            # Контроллеры и сервисы задач (PostgreSQL)
-│   ├── fixtures.ts        # Seed-скрипт для задач
-│   ├── nest-cli.json      # Конфигурация Nest
-│   ├── .env               # (Скрыт) Настройки окружения
-│   └── Dockerfile         # Инструкции для сборки образа
-│
-├── compose.yaml           # Основной файл оркестрации Docker
-├── README.md              # Документация проекта
-└── .gitignore             # Исключения для Git (node_modules, .env)
+│   ├── src/               # Бизнес-логика (PostgreSQL)
+│   ├── fixtures.ts        # Seed-скрипт
+│   └── Dockerfile         
+├── docs/                  # Скриншоты документации
+├── compose.yaml           # Оркестрация контейнеров
+└── README.md              
+🐳 Docker Deployment
+Запуск всей системы одной командой:
+
+Bash
+docker compose up --build -d
+Доступ к API и Swagger:
+Auth Service: http://localhost:8000/api-docs
+
+Todo Service: http://localhost:8021/api/docs
 
 📝 API Specification
-Interactive Spec: Доступна через Swagger UI при запущенных контейнерах по адресам /api каждого сервиса.
-Auth Spec:
-POST /auth/login — Принимает email, password. Возвращает accessToken, refreshToken.
-POST /auth/refresh — Принимает refreshToken. Возвращает новую пару токенов.
+1. Auth Service
+Обеспечивает вход и управление сессиями.
+POST /auth/login — Вход (email/password).
+POST /auth/refresh — Обновление токенов.
 ![Auth](docs/swaggerauth.png)
-Todo Spec:
-GET /todos — Требует JWT. Возвращает список задач.
-POST /todos — Валидация: title (string, required).
+2. Todo Service
+Управление списком дел. Требует Authorization: Bearer <token> в заголовках.
+GET /todos — Получение списка.
+POST /todos — Создание (валидация title).
 ![Todo](docs/swaggertodo.png)
